@@ -165,6 +165,7 @@ class AuthController extends GetxController {
 
   Future<void> tryAutoLogin() async {
     final token = await ApiService.getToken();
+    print("Auto-login token: $token");
     if (token.isEmpty) return;
     await fetchMe();
   }

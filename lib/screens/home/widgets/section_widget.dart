@@ -1,4 +1,5 @@
 import 'package:app/models/section.dart';
+import 'package:app/screens/home/widgets/home_product_container.dart';
 import 'package:flutter/material.dart';
 
 class SectionWidget extends StatelessWidget {
@@ -12,7 +13,7 @@ class SectionWidget extends StatelessWidget {
     }
     return Container(
       padding: const EdgeInsets.only(top: 15.0, right: 10.0, bottom: 15.0),
-      height: 425,
+      height: 410,
       width: double.infinity,
       child: Column(
         children: [
@@ -77,7 +78,10 @@ class SectionWidget extends StatelessWidget {
                 final product = section.products![index];
                 return Row(
                   children: [
-                    SizedBox(width: 180, child: SizedBox()),
+                    SizedBox(
+                      width: 180,
+                      child: HomeProductContainer(product: product),
+                    ),
                     const SizedBox(width: 5),
                     if (index == section.products!.length - 1)
                       const SizedBox(width: 20),

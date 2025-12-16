@@ -1,4 +1,5 @@
 import 'package:app/controllers/auth_controller.dart';
+import 'package:app/controllers/cart_controller.dart';
 import 'package:app/controllers/favorite_controller.dart';
 import 'package:app/controllers/settings_controller.dart';
 import 'package:app/helpers/constants.dart';
@@ -22,6 +23,7 @@ void main() async {
   Get.put(AuthController(), permanent: true);
   Get.put(SettingsController(), permanent: true);
   Get.put(FavoriteController(), permanent: true);
+  Get.put(CartController(), permanent: true);
   // End Get Put
   runApp(const MyApp());
 }

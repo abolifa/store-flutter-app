@@ -1,4 +1,6 @@
 import 'package:app/controllers/auth_controller.dart';
+import 'package:app/controllers/cart_controller.dart';
+import 'package:app/controllers/favorite_controller.dart';
 import 'package:app/controllers/settings_controller.dart';
 import 'package:app/models/settings.dart';
 import 'package:app/router.dart';
@@ -15,6 +17,8 @@ class SplashScreen extends StatefulWidget {
 class _SplashScreenState extends State<SplashScreen> {
   final AuthController authController = Get.find<AuthController>();
   final SettingsController settingsController = Get.find<SettingsController>();
+  final FavoriteController favoriteController = Get.find<FavoriteController>();
+  final CartController cartController = Get.find<CartController>();
 
   @override
   void initState() {
@@ -33,11 +37,15 @@ class _SplashScreenState extends State<SplashScreen> {
     }
 
     if (_isMaintenance(settings)) {
-      Get.offAllNamed('/maintenance');
+      Get.offAllNamed(Routes.maintenance);
       return;
     }
 
     await authController.tryAutoLogin();
+    if (authController.isAuthenticated.value) {
+      await favoriteController.loadFavorites();
+      await cartController.loadCart();
+    }
     Get.offAllNamed(Routes.home);
   }
 

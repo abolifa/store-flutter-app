@@ -1,11 +1,11 @@
 import 'dart:convert';
 
-import 'package:app/models/home_product.dart';
+import 'package:app/models/product.dart';
 import 'package:app/services/api_service.dart';
 import 'package:get/get.dart';
 
 class FavoriteController extends GetxController {
-  final RxList<HomeProduct> favorites = <HomeProduct>[].obs;
+  final RxList<Product> favorites = <Product>[].obs;
   final RxBool isLoading = false.obs;
   final RxString error = ''.obs;
 
@@ -20,7 +20,7 @@ class FavoriteController extends GetxController {
 
       if (res.statusCode == 200) {
         final List data = jsonDecode(res.body);
-        favorites.value = data.map((e) => HomeProduct.fromJson(e)).toList();
+        favorites.value = data.map((e) => Product.fromJson(e)).toList();
       } else {
         error.value = res.body;
       }
@@ -38,7 +38,6 @@ class FavoriteController extends GetxController {
   Future<bool> toggleFavorite(int productId) async {
     try {
       final res = await ApiService.post('/favorites/toggle/$productId');
-
       if (res.statusCode == 200) {
         final data = jsonDecode(res.body);
         final bool favorited = data['favorited'] == true;
@@ -50,7 +49,7 @@ class FavoriteController extends GetxController {
         return favorited;
       }
       return false;
-    } catch (_) {
+    } catch (e) {
       return false;
     }
   }

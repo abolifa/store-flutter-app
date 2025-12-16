@@ -1,4 +1,5 @@
 import 'package:app/helpers/constants.dart';
+import 'package:intl/intl.dart';
 
 class Helpers {
   static double? toDouble(dynamic value) {
@@ -22,5 +23,10 @@ class Helpers {
       return 'public/assets/images/placeholder.png';
     }
     return '${Constants.imageUrl}$imageUrl';
+  }
+
+  static String formatPriceFixed(double value) {
+    final formatter = NumberFormat('#,##0.00', 'en');
+    return formatter.format(value);
   }
 }
