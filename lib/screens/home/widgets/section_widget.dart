@@ -1,3 +1,4 @@
+import 'package:app/helpers/helpers.dart';
 import 'package:app/models/section.dart';
 import 'package:app/screens/home/widgets/home_product_container.dart';
 import 'package:flutter/material.dart';
@@ -13,59 +14,39 @@ class SectionWidget extends StatelessWidget {
     }
     return Container(
       padding: const EdgeInsets.only(top: 15.0, right: 10.0, bottom: 15.0),
+      decoration: BoxDecoration(
+        color: section.color != null
+            ? Helpers.hexToColor(section.color!)
+            : Colors.white,
+      ),
       height: 410,
       width: double.infinity,
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
             padding: const EdgeInsets.only(left: 20.0, right: 5.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              spacing: 2,
               children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  spacing: 2,
-                  children: [
-                    Text(
-                      section.title,
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w700,
-                        color: Colors.grey.shade800,
-                      ),
-                    ),
-                    if (section.shortDescription != null)
-                      Text(
-                        section.shortDescription!,
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w400,
-                          color: Colors.grey.shade500,
-                        ),
-                      ),
-                  ],
-                ),
-                InkWell(
-                  onTap: () {},
-                  child: Container(
-                    width: 65,
-                    height: 25,
-                    decoration: BoxDecoration(
-                      color: Colors.transparent,
-                      borderRadius: BorderRadius.circular(5.0),
-                    ),
-                    child: Center(
-                      child: Text(
-                        'عرض الكل',
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontSize: 11,
-                          fontWeight: FontWeight.w400,
-                        ),
-                      ),
-                    ),
+                Text(
+                  section.title,
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w700,
+                    color: Colors.grey.shade800,
                   ),
                 ),
+                if (section.shortDescription != null)
+                  Text(
+                    section.shortDescription!,
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w400,
+                      color: Colors.grey.shade500,
+                    ),
+                  ),
               ],
             ),
           ),

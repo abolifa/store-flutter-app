@@ -1,4 +1,5 @@
 import 'package:app/controllers/auth_controller.dart';
+import 'package:app/router.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
@@ -19,7 +20,7 @@ class MainMenu extends StatelessWidget {
             {
               'title': 'العناوين',
               'icon': LucideIcons.mapPin300,
-              'action': () => {},
+              'action': () => {Get.toNamed(Routes.addressScreen)},
               'auth': true,
             },
             {
@@ -31,7 +32,7 @@ class MainMenu extends StatelessWidget {
             {
               'title': 'كود QR',
               'icon': LucideIcons.qrCode300,
-              'action': () => {},
+              'action': () => {Get.toNamed(Routes.qrCodeScreen)},
               'auth': true,
             },
           ],
@@ -60,19 +61,40 @@ class MainMenu extends StatelessWidget {
             {
               'title': 'سياسة الخصوصية',
               'icon': LucideIcons.fileLock300,
-              'action': () => {},
+              'action': () => {
+                Get.toNamed(
+                  Routes.staticPage,
+                  arguments: {
+                    'title': 'سياسة الخصوصية',
+                    'settingKey': 'privacy_policy',
+                  },
+                ),
+              },
               'auth': false,
             },
             {
               'title': 'شروط الخدمة',
               'icon': LucideIcons.fileText300,
-              'action': () {},
+              'action': () {
+                Get.toNamed(
+                  Routes.staticPage,
+                  arguments: {
+                    'title': 'شروط الخدمة',
+                    'settingKey': 'terms_conditions',
+                  },
+                );
+              },
               'auth': false,
             },
             {
               'title': 'حول التطبيق',
               'icon': LucideIcons.info300,
-              'action': () {},
+              'action': () {
+                Get.toNamed(
+                  Routes.staticPage,
+                  arguments: {'title': 'حول التطبيق', 'settingKey': 'about_us'},
+                );
+              },
               'auth': false,
             },
             {

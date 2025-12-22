@@ -2,65 +2,85 @@ import 'dart:convert';
 
 import 'package:app/models/product.dart';
 import 'package:app/services/api_service.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class FavoriteController extends GetxController {
+class FavoritesController extends GetxController {
   final RxList<Product> favorites = <Product>[].obs;
   final RxBool isLoading = false.obs;
-  final RxString error = ''.obs;
-
-  int get count => favorites.length;
+  final RxnString error = RxnString();
 
   Future<void> loadFavorites() async {
     isLoading.value = true;
-    error.value = '';
-
+    error.value = null;
     try {
-      final res = await ApiService.get('/favorites');
+      final response = await ApiService.get("/favorites");
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        favorites.clear();
 
-      if (res.statusCode == 200) {
-        final List data = jsonDecode(res.body);
-        favorites.value = data.map((e) => Product.fromJson(e)).toList();
+        if (data["favorites"] != null && data["favorites"] is List) {
+          for (var fav in data["favorites"]) {
+            if (fav["product"] != null) {
+              favorites.add(Product.fromJson(fav["product"]));
+            }
+          }
+        }
       } else {
-        error.value = res.body;
+        error.value = "فشل تحميل المفضلة (${response.statusCode})";
       }
     } catch (e) {
       error.value = e.toString();
+      debugPrint("⚠️ Error loading favorites: $e");
     } finally {
       isLoading.value = false;
     }
   }
 
-  bool isFavorited(int productId) {
-    return favorites.any((p) => p.id == productId);
-  }
-
-  Future<bool> toggleFavorite(int productId) async {
+  /// Add or remove a product from favorites
+  Future<void> toggleFavorite(int productId) async {
     try {
-      final res = await ApiService.post('/favorites/toggle/$productId');
-      if (res.statusCode == 200) {
-        final data = jsonDecode(res.body);
-        final bool favorited = data['favorited'] == true;
-        if (favorited) {
+      final response = await ApiService.post("/favorites/toggle/$productId");
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+
+        // You can adapt this logic if your backend uses boolean instead of string
+        if (data["status"] == "added") {
           await loadFavorites();
-        } else {
+        } else if (data["status"] == "removed") {
           favorites.removeWhere((p) => p.id == productId);
         }
-        return favorited;
+      } else {
+        debugPrint("⚠️ Toggle failed (${response.statusCode})");
       }
-      return false;
     } catch (e) {
-      return false;
+      debugPrint("⚠️ Error toggling favorite: $e");
     }
   }
 
+  /// Check if a product is in favorites
+  bool isFavorite(int productId) {
+    return favorites.any((p) => p.id == productId);
+  }
+
+  /// Return count of favorites
+  int get favoriteCount => favorites.length;
+
+  /// Clear all favorites
   Future<void> clearFavorites() async {
     isLoading.value = true;
+    error.value = null;
+
     try {
-      final res = await ApiService.delete('/favorites/clear');
-      if (res.statusCode == 200) {
+      final response = await ApiService.delete("/favorites/clear");
+      if (response.statusCode == 200) {
         favorites.clear();
+      } else {
+        error.value = "فشل مسح المفضلة (${response.statusCode})";
       }
+    } catch (e) {
+      error.value = e.toString();
+      debugPrint("⚠️ Error clearing favorites: $e");
     } finally {
       isLoading.value = false;
     }

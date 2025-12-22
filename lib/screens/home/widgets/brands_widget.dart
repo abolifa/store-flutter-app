@@ -1,7 +1,9 @@
 import 'package:app/helpers/helpers.dart';
 import 'package:app/models/brand.dart';
+import 'package:app/router.dart';
 import 'package:app/widgets/server_image.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class BrandsWidget extends StatelessWidget {
   final List<Brand> brands;
@@ -25,11 +27,16 @@ class BrandsWidget extends StatelessWidget {
                 ),
                 TextButton(
                   onPressed: () {
-                    // TODO: navigate to all brands screen
+                    Get.toNamed(Routes.brands);
                   },
                   child: Text(
                     'عرض الكل',
-                    style: TextStyle(fontSize: 12, fontWeight: FontWeight.w400),
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w400,
+                      color: Colors.grey.shade700,
+                      decoration: TextDecoration.underline,
+                    ),
                   ),
                 ),
               ],
@@ -52,7 +59,12 @@ class BrandsWidget extends StatelessWidget {
               itemBuilder: (context, index) {
                 final brand = brands[index];
                 return GestureDetector(
-                  onTap: () {},
+                  onTap: () {
+                    Get.toNamed(
+                      Routes.brandProducts,
+                      arguments: {'brandId': brand.id, 'brandName': brand.name},
+                    );
+                  },
                   child: Container(
                     decoration: BoxDecoration(
                       color: Colors.white,

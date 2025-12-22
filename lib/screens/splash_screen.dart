@@ -2,8 +2,10 @@ import 'package:app/controllers/auth_controller.dart';
 import 'package:app/controllers/cart_controller.dart';
 import 'package:app/controllers/favorite_controller.dart';
 import 'package:app/controllers/settings_controller.dart';
-import 'package:app/models/settings.dart';
+import 'package:app/helpers/helpers.dart';
+import 'package:app/models/session.dart';
 import 'package:app/router.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -15,61 +17,67 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
-  final AuthController authController = Get.find<AuthController>();
-  final SettingsController settingsController = Get.find<SettingsController>();
-  final FavoriteController favoriteController = Get.find<FavoriteController>();
-  final CartController cartController = Get.find<CartController>();
+  final AuthController auth = Get.find<AuthController>();
+  final SettingsController settings = Get.find<SettingsController>();
+  final FavoritesController fav = Get.find<FavoritesController>();
+  final CartController cart = Get.find<CartController>();
 
   @override
   void initState() {
     super.initState();
-    _init();
+    _initializeApp();
   }
 
-  Future<void> _init() async {
-    await _waitForSettings();
-
-    final settings = settingsController.settings.value;
-
-    if (settings == null) {
+  Future<void> _initializeApp() async {
+    try {
+      final savedLat = Session.get<double>(SessionKey.keyLatitude);
+      final savedLng = Session.get<double>(SessionKey.keyLongitude);
+      debugPrint('Saved Location: lat=$savedLat, lng=$savedLng');
+      await settings.fetchSettings();
+      if (settings.isMaintenanceMode) {
+        Get.offAllNamed(Routes.maintenance);
+        return;
+      }
+      await _ensureLocationAvailable();
+      final success = await auth.tryAutoLogin();
+      if (success) {
+        await fav.loadFavorites();
+        await cart.loadCart();
+      }
+      if (!mounted) return;
       Get.offAllNamed(Routes.home);
-      return;
-    }
-
-    if (_isMaintenance(settings)) {
-      Get.offAllNamed(Routes.maintenance);
-      return;
-    }
-
-    await authController.tryAutoLogin();
-    if (authController.isAuthenticated.value) {
-      await favoriteController.loadFavorites();
-      await cartController.loadCart();
-    }
-    Get.offAllNamed(Routes.home);
-  }
-
-  Future<void> _waitForSettings() async {
-    while (settingsController.isLoading.value ||
-        settingsController.settings.value == null) {
-      await Future.delayed(const Duration(milliseconds: 50));
+    } catch (e) {
+      debugPrint('Splash initialization error: $e');
+      // Get.offAllNamed(Routes.locationRequired);
     }
   }
 
-  bool _isMaintenance(Settings settings) {
-    if (GetPlatform.isAndroid) {
-      return settings.androidMaintenanceMode == true;
+  Future<void> _ensureLocationAvailable() async {
+    double? lat = Session.get<double>(SessionKey.keyLatitude);
+    double? lng = Session.get<double>(SessionKey.keyLongitude);
+    if (lat != null && lng != null) return;
+    try {
+      final position = await Helpers.determinePosition().timeout(
+        const Duration(seconds: 5),
+      );
+      debugPrint('Location is Granted: $position');
+      await Session.set(SessionKey.keyLatitude, position.latitude);
+      await Session.set(SessionKey.keyLongitude, position.longitude);
+    } catch (e) {
+      debugPrint('⚠️ Location error: $e');
+      await Session.set(SessionKey.keyLatitude, 32.8872);
+      await Session.set(SessionKey.keyLongitude, 13.1913);
     }
-
-    if (GetPlatform.isIOS) {
-      return settings.iosMaintenanceMode == true;
-    }
-
-    return settings.webMaintenanceMode == true;
   }
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    return Scaffold(
+      body: Center(
+        child: CupertinoActivityIndicator(
+          color: Theme.of(context).primaryColor,
+        ),
+      ),
+    );
   }
 }

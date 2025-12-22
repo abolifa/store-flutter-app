@@ -1,8 +1,10 @@
 import 'package:app/helpers/helpers.dart';
 import 'package:app/models/category.dart';
+import 'package:app/router.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class CategoryBubble extends StatelessWidget {
   final List<Category> categories;
@@ -29,7 +31,15 @@ class CategoryBubble extends StatelessWidget {
         itemBuilder: (context, index) {
           final category = categories[index];
           return GestureDetector(
-            onTap: () {},
+            onTap: () {
+              Get.toNamed(
+                Routes.categoryProducts,
+                arguments: {
+                  'categoryId': category.id,
+                  'categoryName': category.name,
+                },
+              );
+            },
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [

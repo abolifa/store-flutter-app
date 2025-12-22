@@ -26,6 +26,7 @@ class HomeProductContainer extends StatelessWidget {
         ],
       ),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           ProductImage(product: product),
           const SizedBox(height: 5.0),

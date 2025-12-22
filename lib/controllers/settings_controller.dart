@@ -11,6 +11,7 @@ class SettingsController extends GetxController {
   final RxMap<String, dynamic> singleSetting = <String, dynamic>{}.obs;
   final RxString error = ''.obs;
   final RxBool needsUpdate = false.obs;
+  Settings? get _settings => settings.value;
 
   @override
   void onInit() {
@@ -73,5 +74,15 @@ class SettingsController extends GetxController {
       currentVersion,
       requiredVersion,
     );
+  }
+
+  bool get isMaintenanceMode {
+    final s = _settings;
+    if (GetPlatform.isAndroid) {
+      return s?.androidMaintenanceMode ?? false;
+    } else if (GetPlatform.isIOS) {
+      return s?.iosMaintenanceMode ?? false;
+    }
+    return false;
   }
 }

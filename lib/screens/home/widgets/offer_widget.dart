@@ -2,9 +2,11 @@ import 'dart:async';
 
 import 'package:app/helpers/helpers.dart';
 import 'package:app/models/offer.dart';
+import 'package:app/router.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class OfferWidget extends StatelessWidget {
   final Offer offer;
@@ -19,7 +21,14 @@ class OfferWidget extends StatelessWidget {
     final url = Helpers.getServerImage(offer.image);
 
     return GestureDetector(
-      onTap: () => {},
+      onTap: () => {
+        if (offer.type == 'url' && offer.url != null && offer.url!.isNotEmpty)
+          {Helpers.launchURL(offer.url!)}
+        else
+          {
+            Get.toNamed(Routes.offerProducts, arguments: {'offerId': offer.id}),
+          },
+      },
       child: Container(
         width: double.infinity,
         padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0),

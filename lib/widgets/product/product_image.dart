@@ -8,13 +8,24 @@ import 'package:flutter/material.dart';
 
 class ProductImage extends StatelessWidget {
   final Product product;
-  const ProductImage({super.key, required this.product});
+  final double? height;
+  final double? width;
+  final bool showFavoriteButton;
+  final bool showCartButton;
+  const ProductImage({
+    super.key,
+    required this.product,
+    this.height,
+    this.width,
+    this.showFavoriteButton = true,
+    this.showCartButton = true,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: double.infinity,
-      height: 220,
+      width: width ?? double.infinity,
+      height: height ?? 220,
       decoration: BoxDecoration(
         border: Border.all(color: Colors.grey.shade200),
         borderRadius: BorderRadius.circular(3.0),
@@ -29,11 +40,12 @@ class ProductImage extends StatelessWidget {
             backgroundColor: Colors.white,
             fit: BoxFit.contain,
           ),
-          Positioned(
-            top: 2,
-            left: 2,
-            child: FavoriteButton(productId: product.id),
-          ),
+          if (showFavoriteButton)
+            Positioned(
+              top: 5,
+              left: 5,
+              child: FavoriteButton(productId: product.id),
+            ),
           if (product.isFeatured)
             Positioned(
               top: 5,
@@ -86,7 +98,7 @@ class ProductImage extends StatelessWidget {
                 ),
               ),
             ),
-          if (product.status != 'out_of_stock')
+          if (product.status != 'out_of_stock' && showCartButton)
             Positioned(
               bottom: 5,
               left: 5,
@@ -96,17 +108,17 @@ class ProductImage extends StatelessWidget {
             Positioned.fill(
               child: Container(
                 decoration: BoxDecoration(
-                  color: Colors.black.withValues(alpha: 0.15),
+                  color: Colors.black.withValues(alpha: 0.35),
                   borderRadius: BorderRadius.circular(3.0),
                 ),
                 child: Center(
                   child: Container(
                     padding: const EdgeInsets.symmetric(
-                      horizontal: 14,
+                      horizontal: 22,
                       vertical: 6,
                     ),
                     decoration: BoxDecoration(
-                      color: Colors.black.withValues(alpha: 0.7),
+                      color: Colors.red.withValues(alpha: 0.6),
                       borderRadius: BorderRadius.circular(50),
                     ),
                     child: const Text(

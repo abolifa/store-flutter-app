@@ -1,9 +1,9 @@
-import 'package:app/controllers/auth_controller.dart';
-import 'package:app/controllers/cart_controller.dart';
-import 'package:app/controllers/favorite_controller.dart';
-import 'package:app/controllers/settings_controller.dart';
+import 'package:app/binding/app_binding.dart';
 import 'package:app/helpers/constants.dart';
 import 'package:app/router.dart';
+import 'package:app/services/fcm_service.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -13,18 +13,13 @@ import 'package:google_maps_flutter_android/google_maps_flutter_android.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  Firebase.initializeApp();
   await GetStorage.init();
-
   if (defaultTargetPlatform == TargetPlatform.android) {
     GoogleMapsFlutterAndroid();
   }
 
-  // Get Put
-  Get.put(AuthController(), permanent: true);
-  Get.put(SettingsController(), permanent: true);
-  Get.put(FavoriteController(), permanent: true);
-  Get.put(CartController(), permanent: true);
-  // End Get Put
+  FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
   runApp(const MyApp());
 }
 
@@ -37,6 +32,7 @@ class MyApp extends StatelessWidget {
       navigatorKey: Get.key,
       locale: const Locale('ar', 'SA'),
       supportedLocales: const [Locale('ar', 'SA')],
+      initialBinding: AppBinding(),
       localizationsDelegates: const [
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,

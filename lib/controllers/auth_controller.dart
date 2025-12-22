@@ -2,6 +2,8 @@ import 'dart:convert';
 
 import 'package:app/models/user.dart';
 import 'package:app/services/api_service.dart';
+import 'package:app/services/fcm_service.dart';
+import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 
 class AuthController extends GetxController {
@@ -37,6 +39,7 @@ class AuthController extends GetxController {
         await ApiService.saveToken(data['token']);
         user.value = User.fromJson(data['customer']);
         isAuthenticated.value = true;
+        await _syncFcmAfterAuth();
         return true;
       }
       error.value = 'Registration failed: ${res.body}';
@@ -64,6 +67,7 @@ class AuthController extends GetxController {
         await ApiService.saveToken(data['token']);
         await fetchMe();
         isAuthenticated.value = true;
+        await _syncFcmAfterAuth();
         return true;
       }
 
@@ -93,6 +97,7 @@ class AuthController extends GetxController {
       await ApiService.saveToken(data['token']);
       await fetchMe();
       isAuthenticated.value = true;
+      await _syncFcmAfterAuth();
     } else {
       throw Exception(res.body);
     }
@@ -102,7 +107,6 @@ class AuthController extends GetxController {
 
   Future<void> fetchMe() async {
     final res = await ApiService.get('/customer/me');
-
     if (res.statusCode == 200) {
       user.value = User.fromJson(jsonDecode(res.body));
       isAuthenticated.value = true;
@@ -163,10 +167,21 @@ class AuthController extends GetxController {
     isLoading.value = false;
   }
 
-  Future<void> tryAutoLogin() async {
+  Future<bool> tryAutoLogin() async {
     final token = await ApiService.getToken();
-    print("Auto-login token: $token");
-    if (token.isEmpty) return;
-    await fetchMe();
+    debugPrint('Auto-login token: $token');
+    if (token.isEmpty) {
+      return false;
+    } else {
+      await fetchMe();
+      return isAuthenticated.value;
+    }
+  }
+
+  Future<void> _syncFcmAfterAuth() async {
+    try {
+      final fcm = Get.find<FcmService>();
+      await fcm.syncToken();
+    } catch (_) {}
   }
 }

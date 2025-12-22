@@ -88,7 +88,7 @@ class PriceWidget extends StatelessWidget {
           ),
           if (hasDiscount)
             Text(
-              price.toStringAsFixed(2),
+              price.toStringAsFixed(0),
               style: TextStyle(
                 fontSize: fontSize2 ?? 13,
                 fontFamily: 'Poppins',
