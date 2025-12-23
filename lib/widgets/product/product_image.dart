@@ -1,10 +1,12 @@
 import 'package:app/helpers/constants.dart';
 import 'package:app/helpers/helpers.dart';
 import 'package:app/models/product.dart';
+import 'package:app/router.dart';
 import 'package:app/widgets/product/favorite_button.dart';
 import 'package:app/widgets/product/product_cart_button.dart';
 import 'package:app/widgets/server_image.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class ProductImage extends StatelessWidget {
   final Product product;
@@ -32,13 +34,19 @@ class ProductImage extends StatelessWidget {
       ),
       child: Stack(
         children: [
-          ServerImage(
-            url: Helpers.getServerImage(product.image),
-            width: double.infinity,
-            height: double.infinity,
-            padding: EdgeInsets.all(5),
-            backgroundColor: Colors.white,
-            fit: BoxFit.contain,
+          GestureDetector(
+            onTap: () => Get.toNamed(
+              Routes.productDetails,
+              arguments: {'productId': product.id},
+            ),
+            child: ServerImage(
+              url: Helpers.getServerImage(product.image),
+              width: double.infinity,
+              height: double.infinity,
+              padding: EdgeInsets.all(5),
+              backgroundColor: Colors.white,
+              fit: BoxFit.contain,
+            ),
           ),
           if (showFavoriteButton)
             Positioned(

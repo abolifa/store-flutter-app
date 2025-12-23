@@ -18,6 +18,7 @@ import 'package:app/screens/utilities/favorites_screen.dart';
 import 'package:app/screens/utilities/maintenance_screen.dart';
 import 'package:app/screens/utilities/no_address_screen.dart';
 import 'package:app/screens/utilities/offer_products_screen.dart';
+import 'package:app/screens/utilities/product_details_screen.dart';
 import 'package:app/screens/utilities/products_by_id_screen.dart';
 import 'package:app/screens/utilities/search_products_screen.dart';
 import 'package:app/screens/utilities/slider_products_screen.dart';
@@ -51,6 +52,7 @@ class Routes {
   static const checkoutScreen = '/checkout-screen';
   static const orderPlace = '/order-place';
   static const wallet = '/wallet';
+  static const productDetails = '/product-details';
 
   static final pages = [
     GetPage(name: splash, page: () => SplashScreen()),
@@ -219,5 +221,16 @@ class Routes {
       },
     ),
     GetPage(name: wallet, page: () => const WalletScreen()),
+    GetPage(
+      name: productDetails,
+      page: () {
+        final args = Get.arguments;
+        int productId = 0;
+        if (args is Map) {
+          productId = int.tryParse('${args['productId'] ?? 0}') ?? 0;
+        }
+        return ProductDetailsScreen(productId: productId);
+      },
+    ),
   ];
 }

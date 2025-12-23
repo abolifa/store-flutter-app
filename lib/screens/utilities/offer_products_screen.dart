@@ -69,7 +69,7 @@ class OfferProductsScreen extends StatelessWidget {
                                 crossAxisCount: 2,
                                 mainAxisSpacing: 6,
                                 crossAxisSpacing: 6,
-                                childAspectRatio: 0.54,
+                                childAspectRatio: 0.55,
                               ),
                           itemCount: pagination.items.length,
                           itemBuilder: (_, i) {

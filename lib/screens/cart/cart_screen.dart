@@ -130,7 +130,6 @@ class _CartScreenState extends State<CartScreen> {
                                     variant: variant,
                                     fontSize1: 16,
                                     fontSize2: 13,
-                                    fontSize3: 11,
                                   ),
                                   const SizedBox(height: 10),
                                   if ((product?.perks?.isNotEmpty ?? false))

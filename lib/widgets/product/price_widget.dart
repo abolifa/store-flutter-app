@@ -7,7 +7,7 @@ class PriceWidget extends StatelessWidget {
   final ProductVariant? variant;
   final double? fontSize1;
   final double? fontSize2;
-  final double? fontSize3;
+  final double? bottomSpacing;
 
   const PriceWidget({
     super.key,
@@ -15,7 +15,7 @@ class PriceWidget extends StatelessWidget {
     this.variant,
     this.fontSize1,
     this.fontSize2,
-    this.fontSize3,
+    this.bottomSpacing,
   });
 
   @override
@@ -68,7 +68,7 @@ class PriceWidget extends StatelessWidget {
                   style: TextStyle(
                     fontFamily: 'Poppins',
                     fontWeight: FontWeight.w600,
-                    fontSize: fontSize2 ?? 12,
+                    fontSize: fontSize1 != null ? fontSize1! * 0.8 : 10,
                     color: Colors.grey.shade700,
                   ),
                 ),
@@ -76,11 +76,11 @@ class PriceWidget extends StatelessWidget {
             ),
           ),
           Padding(
-            padding: const EdgeInsets.only(bottom: 3.0),
+            padding: EdgeInsets.only(bottom: bottomSpacing ?? 3.0),
             child: Text(
               'د.ل',
               style: TextStyle(
-                fontSize: fontSize2 ?? 12,
+                fontSize: fontSize1 != null ? fontSize1! * 0.7 : 12,
                 fontWeight: FontWeight.bold,
                 color: Colors.grey.shade700,
               ),

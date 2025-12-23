@@ -27,6 +27,18 @@ class NotificationService extends GetxService {
         }
       },
     );
+
+    const channel = AndroidNotificationChannel(
+      'default_channel',
+      'Notifications',
+      importance: Importance.max,
+    );
+
+    await _local
+        .resolvePlatformSpecificImplementation<
+          AndroidFlutterLocalNotificationsPlugin
+        >()
+        ?.createNotificationChannel(channel);
   }
 
   void _listenForeground() {
