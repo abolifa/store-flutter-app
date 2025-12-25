@@ -52,7 +52,6 @@ class _CategoriesScreenState extends State<CategoriesScreen>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: const SearchBarGlobal(),
-      backgroundColor: Colors.white,
       body: Obx(() {
         if (controller.isLoading.value && controller.items.isEmpty) {
           return const Center(child: CupertinoActivityIndicator());
@@ -62,7 +61,6 @@ class _CategoriesScreenState extends State<CategoriesScreen>
           // No categories available
           return SizedBox();
         }
-
         final List<Widget> listChildren = <Widget>[];
         for (int i = 0; i < controller.items.length; i += 3) {
           final items = controller.items.skip(i).take(3).toList();

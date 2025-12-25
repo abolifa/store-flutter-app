@@ -1,6 +1,8 @@
 import 'package:app/controllers/cart_controller.dart';
 import 'package:app/controllers/checkout_controller.dart';
 import 'package:app/controllers/order_controller.dart';
+import 'package:app/controllers/wallet_controller.dart';
+import 'package:app/router.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -27,6 +29,7 @@ class _OrderPlaceScreenState extends State<OrderPlaceScreen> {
   final OrderController orderCtrl = Get.find<OrderController>();
   final CheckoutController checkoutCtrl = Get.find<CheckoutController>();
   final CartController cartCtrl = Get.find<CartController>();
+  final WalletController walletCtrl = Get.find<WalletController>();
 
   @override
   void initState() {
@@ -46,6 +49,7 @@ class _OrderPlaceScreenState extends State<OrderPlaceScreen> {
 
     if (success) {
       cartCtrl.clearCart();
+      walletCtrl.refreshAll();
       setState(() {
         _uiState = OrderPlaceUiState.success;
       });
@@ -118,7 +122,8 @@ class _OrderPlaceScreenState extends State<OrderPlaceScreen> {
         const SizedBox(height: 24),
         ElevatedButton(
           onPressed: () {
-            Get.offAllNamed('/orders');
+            Get.offAllNamed(Routes.home);
+            Get.toNamed(Routes.orders);
           },
           child: const Text('عرض الطلبات'),
         ),

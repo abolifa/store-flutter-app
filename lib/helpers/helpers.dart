@@ -146,4 +146,56 @@ class Helpers {
       throw Exception('Could not launch $url');
     }
   }
+
+  static bool hasMeaningfulHtml(String? html) {
+    if (html == null) return false;
+
+    final stripped = html
+        .replaceAll(RegExp(r'<[^>]*>'), '')
+        .replaceAll('&nbsp;', '')
+        .replaceAll('\u00A0', '')
+        .trim();
+
+    return stripped.isNotEmpty;
+  }
+
+  static String getOrderStatusLabel(String status) {
+    // $table->enum('status', ['pending', 'processing', 'shipped', 'delivered', 'cancelled', 'refunded'])->default('pending')->index();
+
+    switch (status) {
+      case 'pending':
+        return 'قيد الانتظار';
+      case 'processing':
+        return 'قيد المعالجة';
+      case 'shipped':
+        return 'تم الشحن';
+      case 'delivered':
+        return 'تم التوصيل';
+      case 'cancelled':
+        return 'تم الإلغاء';
+      case 'refunded':
+        return 'تم الاسترجاع';
+      default:
+        return 'غير معروف';
+    }
+  }
+
+  static Color getOrderStatusColor(String status) {
+    switch (status) {
+      case 'pending':
+        return Colors.orange;
+      case 'processing':
+        return Colors.blue;
+      case 'shipped':
+        return Colors.purple;
+      case 'delivered':
+        return Colors.green;
+      case 'cancelled':
+        return Colors.red;
+      case 'refunded':
+        return Colors.grey;
+      default:
+        return Colors.black;
+    }
+  }
 }

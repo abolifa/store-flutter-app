@@ -1,68 +1,88 @@
+import 'package:app/controllers/store_controller.dart';
 import 'package:app/helpers/helpers.dart';
 import 'package:app/models/store.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
-import 'package:timeago/timeago.dart' as timeago;
 
-class ProductSellerWidget extends StatelessWidget {
+class ProductSellerWidget extends StatefulWidget {
   final Store store;
   const ProductSellerWidget({super.key, required this.store});
 
   @override
-  Widget build(BuildContext context) {
-    final since = timeago.format(
-      store.createdAt ?? DateTime.now(),
-      locale: 'ar',
-    );
+  State<ProductSellerWidget> createState() => _ProductSellerWidgetState();
+}
 
+class _ProductSellerWidgetState extends State<ProductSellerWidget> {
+  late final StoreController storeController;
+
+  @override
+  void initState() {
+    super.initState();
+    storeController = Get.isRegistered<StoreController>()
+        ? Get.find<StoreController>()
+        : Get.put(StoreController(), permanent: false);
+
+    storeController.fetchStorePerks(storeId: widget.store.id);
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+      padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: BorderRadius.circular(10),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withValues(alpha: 0.2),
-            spreadRadius: 2,
-            blurRadius: 5,
-            offset: const Offset(0, 3),
+            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
           ),
         ],
       ),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
-            spacing: 10,
             children: [
               Container(
-                width: 50,
-                height: 50,
+                width: 48,
+                height: 48,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  border: Border.all(color: Colors.grey.withValues(alpha: 0.2)),
+                  border: Border.all(
+                    color: Colors.grey.withValues(alpha: 0.25),
+                  ),
                   image: DecorationImage(
-                    image: NetworkImage(Helpers.getServerImage(store.logo)),
+                    image: NetworkImage(
+                      Helpers.getServerImage(widget.store.logo),
+                    ),
                     fit: BoxFit.contain,
                   ),
                 ),
               ),
+              const SizedBox(width: 12),
               Expanded(
-                child: Row(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       'البائع',
                       style: TextStyle(
-                        fontSize: 14,
+                        fontSize: 12,
                         color: Colors.grey.shade600,
                       ),
                     ),
-                    const SizedBox(width: 5),
+                    const SizedBox(height: 2),
                     Text(
-                      store.name,
+                      widget.store.name,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                       style: const TextStyle(
                         fontSize: 14,
-                        fontWeight: FontWeight.w500,
+                        fontWeight: FontWeight.w600,
                       ),
                     ),
                   ],
@@ -70,49 +90,75 @@ class ProductSellerWidget extends StatelessWidget {
               ),
               Icon(
                 Icons.arrow_forward_ios,
-                size: 16,
+                size: 14,
                 color: Colors.grey.shade400,
               ),
             ],
           ),
+          const SizedBox(height: 12),
+          Divider(thickness: 0.4, color: Colors.grey.shade300),
           const SizedBox(height: 10),
-          const Divider(thickness: 0.2),
-          const SizedBox(height: 10),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            spacing: 20,
-            children: [
-              Column(
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(6),
-                    decoration: BoxDecoration(
-                      color: Colors.grey.withValues(alpha: 0.1),
-                      shape: BoxShape.circle,
-                    ),
-                    child: Icon(
-                      LucideIcons.handshake300,
-                      size: 28,
-                      color: Colors.grey.shade600,
-                    ),
-                  ),
-                  const SizedBox(height: 6),
-                  Text(
-                    'شريك منذ',
-                    style: TextStyle(fontSize: 13, color: Colors.grey.shade600),
-                  ),
-                  Text(
-                    since,
-                    style: const TextStyle(
-                      fontSize: 13,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
+          Obx(() {
+            if (storeController.isLoading.value) {
+              return const SizedBox(height: 28);
+            }
+            final perks = storeController.storePerks.value;
+            if (perks == null) {
+              return const SizedBox();
+            }
+            return Row(
+              spacing: 12,
+              children: [
+                _perkChip(LucideIcons.handshake300, 'شريك منذ', perks.since),
+                _perkChip(
+                  LucideIcons.packageCheck300,
+                  'طلبات مؤكدة',
+                  perks.confirmedOrders.toString(),
+                ),
+                _perkChip(
+                  LucideIcons.star300,
+                  'التقييم',
+                  perks.reviewsAverage.toStringAsFixed(1),
+                ),
+              ],
+            );
+          }),
         ],
+      ),
+    );
+  }
+
+  Widget _perkChip(IconData icon, String label, String value) {
+    return Expanded(
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+        decoration: BoxDecoration(
+          color: Colors.grey.withValues(alpha: 0.08),
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(icon, size: 18, color: Colors.grey.shade700),
+            const SizedBox(width: 6),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  label,
+                  style: TextStyle(fontSize: 11, color: Colors.grey.shade600),
+                ),
+                Text(
+                  value,
+                  style: const TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }

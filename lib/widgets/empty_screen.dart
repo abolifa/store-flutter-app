@@ -21,14 +21,13 @@ class EmptyScreen extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          if (imagePath != null)
-            Image.asset(
-              imagePath!,
-              height: 180,
-              width: 180,
-              fit: BoxFit.cover,
-              opacity: const AlwaysStoppedAnimation(0.8),
-            ),
+          Image.asset(
+            imagePath ?? 'assets/images/no-products.png',
+            height: 180,
+            width: 180,
+            fit: BoxFit.cover,
+            opacity: const AlwaysStoppedAnimation(0.8),
+          ),
           const SizedBox(height: 20),
           Text(
             title,

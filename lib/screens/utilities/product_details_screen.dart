@@ -1,11 +1,14 @@
 import 'package:app/controllers/product_details_controller.dart';
 import 'package:app/helpers/helpers.dart';
-import 'package:app/widgets/custom_app_bar.dart';
+import 'package:app/screens/home/widgets/home_product_container.dart';
 import 'package:app/widgets/product/expandable_html.dart';
 import 'package:app/widgets/product/perks_widget.dart';
 import 'package:app/widgets/product/price_widget.dart';
 import 'package:app/widgets/product/product_image_gallery.dart';
+import 'package:app/widgets/product/product_normal_cart_button.dart';
+import 'package:app/widgets/product_rating_section.dart';
 import 'package:app/widgets/product_seller_widget.dart';
+import 'package:app/widgets/search_bar_global.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -20,7 +23,7 @@ class ProductDetailsScreen extends StatelessWidget {
     );
 
     return Scaffold(
-      appBar: const CustomAppBar(title: 'تفاصيل المنتج'),
+      appBar: SearchBarGlobal(showBackButton: true),
       body: Obx(() {
         if (ctrl.isLoading.value) {
           return const Center(child: CircularProgressIndicator());
@@ -91,71 +94,107 @@ class ProductDetailsScreen extends StatelessWidget {
                       mainImage: product.image ?? '',
                       images: product.images ?? [],
                     ),
+                    const SizedBox(height: 5),
                     PriceWidget(
                       product: product,
                       fontSize1: 20,
                       fontSize2: 18,
                       bottomSpacing: 4,
                     ),
-                    PerksWidget(perks: product.perks ?? []),
+                    PerksWidget(perks: product.perks ?? [], fontSize: 15),
+                    const SizedBox(height: 5),
                   ],
                 ),
               ),
               const SizedBox(height: 12),
-              ExpandableHtml(html: product.description ?? ''),
+              if (Helpers.hasMeaningfulHtml(product.description))
+                ExpandableHtml(html: product.description ?? ''),
               const SizedBox(height: 12),
               if (product.storeId != null)
                 ProductSellerWidget(store: product.store!),
               if (product.storeId != null) const SizedBox(height: 12),
-              const Text(
-                'منتجات مشابهة',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-              ),
+              ProductRatingSection(product: product),
               const SizedBox(height: 12),
               Obx(() {
                 if (ctrl.isRelatedLoading.value) {
                   return const Center(child: CircularProgressIndicator());
                 }
                 if (ctrl.relatedProducts.isEmpty) {
-                  return const Text('لا توجد منتجات مشابهة');
-                }
-                return SizedBox(
-                  height: 260,
-                  child: ListView.separated(
-                    scrollDirection: Axis.horizontal,
-                    itemCount: ctrl.relatedProducts.length,
-                    separatorBuilder: (_, __) => const SizedBox(width: 12),
-                    itemBuilder: (context, index) {
-                      final p = ctrl.relatedProducts[index];
-                      return SizedBox(
-                        width: 160,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            AspectRatio(
-                              aspectRatio: 1,
-                              child: Image.network(
-                                Helpers.getServerImage(p.image),
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-                            const SizedBox(height: 8),
-                            Text(
-                              p.name,
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ],
+                  return Center(
+                    child: Padding(
+                      padding: const EdgeInsets.all(20.0),
+                      child: Text(
+                        'لا توجد منتجات مشابهة',
+                        style: TextStyle(
+                          color: Colors.grey.shade600,
+                          fontSize: 15,
                         ),
-                      );
-                    },
+                      ),
+                    ),
+                  );
+                }
+                return Container(
+                  width: double.infinity,
+                  height: 400,
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(8),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey.withValues(alpha: 0.2),
+                        spreadRadius: 2,
+                        blurRadius: 5,
+                        offset: const Offset(0, 3),
+                      ),
+                    ],
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'منتجات مشابهة',
+                        style: TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.grey.shade900,
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      Expanded(
+                        child: ListView.separated(
+                          scrollDirection: Axis.horizontal,
+                          itemCount: ctrl.relatedProducts.length,
+                          separatorBuilder: (_, __) =>
+                              const SizedBox(width: 12),
+                          itemBuilder: (context, index) {
+                            final p = ctrl.relatedProducts[index];
+                            return SizedBox(
+                              width: 180,
+                              child: HomeProductContainer(product: p),
+                            );
+                          },
+                        ),
+                      ),
+                    ],
                   ),
                 );
               }),
+              const SizedBox(height: 50),
             ],
           ),
         );
       }),
+      bottomNavigationBar: Padding(
+        padding: const EdgeInsets.only(left: 10, right: 10, bottom: 10, top: 5),
+        child: Obx(() {
+          final product = ctrl.product.value;
+          if (product == null) {
+            return const SizedBox.shrink();
+          }
+          return ProductNormalCartButton(product: product);
+        }),
+      ),
     );
   }
 }

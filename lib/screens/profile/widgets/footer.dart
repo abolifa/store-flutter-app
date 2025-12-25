@@ -1,6 +1,10 @@
+import 'dart:io';
+
 import 'package:app/controllers/auth_controller.dart';
+import 'package:app/controllers/settings_controller.dart';
 import 'package:app/widgets/app_dialog.dart';
 import 'package:app/widgets/custom_button.dart';
+import 'package:app/widgets/social_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
@@ -11,6 +15,7 @@ class Footer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final auth = Get.find<AuthController>();
+    final settings = Get.find<SettingsController>();
     return Column(
       children: [
         Obx(() {
@@ -63,6 +68,7 @@ class Footer extends StatelessWidget {
                 indent: 20,
                 endIndent: 20,
               ),
+              SocialIcons(),
             ],
           ),
         ),
@@ -76,26 +82,28 @@ class Footer extends StatelessWidget {
               style: TextStyle(fontSize: 11, color: Colors.grey.shade500),
             ),
             Text(
-              "1.0.0",
+              Platform.isAndroid
+                  ? settings.settings.value?.androidAppVersion.toString() ?? ""
+                  : settings.settings.value?.iosAppVersion.toString() ?? "",
               style: TextStyle(fontSize: 11, color: Colors.grey.shade500),
             ),
           ],
         ),
-        const SizedBox(height: 20),
+        const SizedBox(height: 10),
         Row(
           spacing: 5,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
-              'تم التطوير بواسطة',
-              style: TextStyle(fontSize: 13, color: Colors.grey),
-            ),
-            Text('©', style: TextStyle(fontSize: 13, color: Colors.grey)),
-            Text(
               DateTime.now().year.toString(),
               style: TextStyle(fontSize: 13, color: Colors.grey),
             ),
+            Text('©', style: TextStyle(fontSize: 13, color: Colors.grey)),
             Text('|', style: TextStyle(fontSize: 13, color: Colors.grey)),
+            Text(
+              settings.settings.value?.siteName ?? '',
+              style: TextStyle(fontSize: 13, color: Colors.grey),
+            ),
             Text(
               'جميع الحقوق محفوظة',
               style: TextStyle(fontSize: 13, color: Colors.grey),

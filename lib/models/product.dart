@@ -1,6 +1,7 @@
 import 'package:app/helpers/helpers.dart';
 import 'package:app/models/brand.dart';
 import 'package:app/models/perk.dart';
+import 'package:app/models/review.dart';
 import 'package:app/models/store.dart';
 import 'package:app/models/unit.dart';
 
@@ -24,6 +25,7 @@ class Product {
   final Brand? brand;
   final List<ProductVariant>? variants;
   final Store? store;
+  final List<Review>? approvedReviews;
 
   Product({
     required this.id,
@@ -45,6 +47,7 @@ class Product {
     this.brand,
     this.variants,
     this.store,
+    this.approvedReviews,
   });
 
   factory Product.fromJson(Map<String, dynamic> json) {
@@ -76,6 +79,11 @@ class Product {
                 .toList()
           : null,
       store: json['store'] != null ? Store.fromJson(json['store']) : null,
+      approvedReviews: json['approved_reviews'] != null
+          ? (json['approved_reviews'] as List)
+                .map((review) => Review.fromJson(review))
+                .toList()
+          : null,
     );
   }
 
@@ -100,6 +108,9 @@ class Product {
       'brand': brand?.toJson(),
       'variants': variants?.map((variant) => variant.toJson()).toList(),
       'store': store?.toJson(),
+      'approved_reviews': approvedReviews
+          ?.map((review) => review.toJson())
+          .toList(),
     };
   }
 }

@@ -1,8 +1,7 @@
 import 'package:app/helpers/helpers.dart';
 import 'package:app/models/category.dart';
 import 'package:app/router.dart';
-import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:app/widgets/server_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -46,20 +45,11 @@ class CategoryBubble extends StatelessWidget {
                 Expanded(
                   child: AspectRatio(
                     aspectRatio: 1,
-                    child: ClipOval(
-                      child: Container(
-                        color: Colors.transparent,
-                        child: CachedNetworkImage(
-                          imageUrl: Helpers.getServerImage(
-                            category.image ?? "",
-                          ),
-                          placeholder: (context, url) =>
-                              const Center(child: CupertinoActivityIndicator()),
-                          errorWidget: (context, url, error) =>
-                              const Icon(Icons.error),
-                          fit: BoxFit.contain, // keep aspect ratio
-                        ),
-                      ),
+                    child: ServerImage(
+                      url: Helpers.getServerImage(category.image),
+                      fit: BoxFit.cover,
+                      backgroundColor: Colors.transparent,
+                      boxShape: BoxShape.circle,
                     ),
                   ),
                 ),

@@ -8,8 +8,10 @@ import 'package:app/screens/categories/category_product_screen.dart';
 import 'package:app/screens/main_home_screen.dart';
 import 'package:app/screens/profile/screens/address_form.dart';
 import 'package:app/screens/profile/screens/address_screen.dart';
+import 'package:app/screens/profile/screens/orders_screen.dart';
 import 'package:app/screens/profile/screens/qr_code_screen.dart';
 import 'package:app/screens/profile/screens/rich_html_view.dart';
+import 'package:app/screens/profile/screens/single_order_screen.dart';
 import 'package:app/screens/profile/screens/wallet_screen.dart';
 import 'package:app/screens/splash_screen.dart';
 import 'package:app/screens/utilities/brand_products_screen.dart';
@@ -53,6 +55,8 @@ class Routes {
   static const orderPlace = '/order-place';
   static const wallet = '/wallet';
   static const productDetails = '/product-details';
+  static const orders = '/orders';
+  static const singleOrder = '/single-order';
 
   static final pages = [
     GetPage(name: splash, page: () => SplashScreen()),
@@ -230,6 +234,18 @@ class Routes {
           productId = int.tryParse('${args['productId'] ?? 0}') ?? 0;
         }
         return ProductDetailsScreen(productId: productId);
+      },
+    ),
+    GetPage(name: orders, page: () => const OrdersScreen()),
+    GetPage(
+      name: singleOrder,
+      page: () {
+        final args = Get.arguments;
+        int orderId = 0;
+        if (args is Map) {
+          orderId = int.tryParse('${args['orderId'] ?? 0}') ?? 0;
+        }
+        return SingleOrderScreen(orderId: orderId);
       },
     ),
   ];

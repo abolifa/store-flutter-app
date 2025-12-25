@@ -22,6 +22,7 @@ class ProfileScreen extends StatelessWidget {
               AccountWidget(),
               SizedBox(height: 10),
               FastAccessWidget(),
+              SizedBox(height: 10),
               if (settings.needsUpdate.value) UpdateWidget(),
               MainMenu(),
               const SizedBox(height: 20),

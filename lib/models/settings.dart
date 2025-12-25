@@ -1,4 +1,7 @@
 class Settings {
+  final String? siteName;
+  final String? siteDescription;
+  final String? siteLogo;
   final String? contactEmail;
   final String? contactPhone;
   final String? contactAddress;
@@ -14,6 +17,9 @@ class Settings {
   final String? tiktokUrl;
 
   Settings({
+    this.siteName,
+    this.siteDescription,
+    this.siteLogo,
     this.contactEmail,
     this.contactPhone,
     this.contactAddress,
@@ -31,6 +37,9 @@ class Settings {
 
   factory Settings.fromJson(Map<String, dynamic> json) {
     return Settings(
+      siteName: json['site_name'] as String?,
+      siteDescription: json['site_description'] as String?,
+      siteLogo: json['site_logo'] as String?,
       contactEmail: json['contact_email'] as String?,
       contactPhone: json['contact_phone'] as String?,
       contactAddress: json['contact_address'] as String?,

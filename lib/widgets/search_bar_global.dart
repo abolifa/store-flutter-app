@@ -5,7 +5,9 @@ import 'package:lucide_icons_flutter/lucide_icons.dart';
 class SearchBarGlobal extends StatelessWidget implements PreferredSizeWidget {
   @override
   Size get preferredSize => const Size.fromHeight(kToolbarHeight);
-  const SearchBarGlobal({super.key});
+
+  final bool? showBackButton;
+  const SearchBarGlobal({super.key, this.showBackButton});
 
   @override
   Widget build(BuildContext context) {
@@ -13,33 +15,46 @@ class SearchBarGlobal extends StatelessWidget implements PreferredSizeWidget {
       scrolledUnderElevation: 0,
       backgroundColor: Colors.white,
       automaticallyImplyLeading: false,
-      title: Container(
-        height: 45,
-        padding: const EdgeInsets.symmetric(horizontal: 12),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(8),
-          color: Colors.grey.shade100,
-        ),
-        child: Row(
-          children: [
-            Expanded(
-              child: GestureDetector(
-                onTap: () {
-                  // Navigate to the search screen
-                },
-                child: Text(
-                  'ما الذي تبحث عنه؟',
-                  style: TextStyle(
-                    color: Colors.grey.shade600,
-                    fontSize: 14,
-                    fontWeight: FontWeight.w400,
+      title: Row(
+        children: [
+          if (showBackButton == true)
+            IconButton(
+              icon: const Icon(LucideIcons.arrowRight300, color: Colors.black),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          Expanded(
+            child: Container(
+              height: 45,
+              padding: const EdgeInsets.symmetric(horizontal: 12),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(8),
+                color: Colors.grey.shade100,
+              ),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: GestureDetector(
+                      onTap: () {
+                        // Navigate to the search screen
+                      },
+                      child: Text(
+                        'ما الذي تبحث عنه؟',
+                        style: TextStyle(
+                          color: Colors.grey.shade600,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w400,
+                        ),
+                      ),
+                    ),
                   ),
-                ),
+                  CameraIcon(icon: LucideIcons.camera, size: 22),
+                ],
               ),
             ),
-            CameraIcon(icon: LucideIcons.camera, size: 22),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

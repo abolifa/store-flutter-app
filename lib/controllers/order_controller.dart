@@ -7,7 +7,6 @@ enum PlaceOrderState { idle, placing, success, checkoutChanged, error }
 
 class OrderController extends GetxController {
   final Rx<PlaceOrderState> state = PlaceOrderState.idle.obs;
-
   final RxnInt orderId = RxnInt();
   final RxnString orderReference = RxnString();
 

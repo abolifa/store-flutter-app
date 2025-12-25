@@ -24,7 +24,7 @@ class FastAccessWidget extends StatelessWidget {
           'slogan': 'إدارة وتتبع',
           'icon': LucideIcons.package200,
           'action': () {
-            Get.toNamed(Routes.home, arguments: 1);
+            Get.toNamed(Routes.orders);
           },
         },
         {

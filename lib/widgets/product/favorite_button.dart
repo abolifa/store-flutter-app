@@ -1,4 +1,6 @@
+import 'package:app/controllers/auth_controller.dart';
 import 'package:app/controllers/favorite_controller.dart';
+import 'package:app/router.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -15,6 +17,7 @@ class FavoriteButton extends StatefulWidget {
 class _FavoriteButtonState extends State<FavoriteButton> {
   bool _isProcessing = false;
   final FavoritesController favCtrl = Get.find<FavoritesController>();
+  final AuthController authCtrl = Get.find<AuthController>();
 
   Future<void> _handleToggle() async {
     if (_isProcessing) return;
@@ -24,6 +27,11 @@ class _FavoriteButtonState extends State<FavoriteButton> {
 
     final newFav = favCtrl.isFavorite(widget.productId);
     if (mounted) {
+      if (!authCtrl.isAuthenticated.value) {
+        Get.toNamed(Routes.login);
+        setState(() => _isProcessing = false);
+        return;
+      }
       Get.closeAllSnackbars();
       GetSnackBar(
         message: newFav

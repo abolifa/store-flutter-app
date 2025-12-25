@@ -24,6 +24,7 @@ class CheckoutScreen extends StatefulWidget {
 
 class _CheckoutScreenState extends State<CheckoutScreen> {
   final CheckoutController checkoutCtrl = Get.find<CheckoutController>();
+  final WalletController walletCtrl = Get.find<WalletController>();
   final PaymentMethodsController paymentCtrl = Get.put(
     PaymentMethodsController(),
     permanent: false,
@@ -43,8 +44,8 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     super.initState();
     _couponCtrl = TextEditingController();
     _couponFocus = FocusNode();
-
     checkoutCtrl.loadCheckout(widget.selectedAddress.id);
+    walletCtrl.refreshAll();
     paymentCtrl.fetchPaymentMethods();
   }
 
